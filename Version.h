@@ -1,0 +1,7 @@
+#define SemanticVersion "0.2.0-alpha.55"
+#define BranchName "dev"
+#define SHA_short "212bc9a"
+#define FullBuildMetaData "Branch.dev.Sha.212bc9abaa0891ccfb40c38eee83f7476a838285"
+#define WorkingDirectory "ESP32_OTA_Template"
+#define FullWorkingDirectory "F:\\Users\\olaf\\Documents\\PlatformIO\\Projects\\ESP32_OTA_Template"
+#define ComputerName "OLAF-PC"

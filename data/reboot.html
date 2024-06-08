@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta content="text/html" ; charset="UTF-8" ; http-equiv="content-type">
+    <meta name="viewport" content="width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>RTK base setup</title>
+
+    <script type="text/javascript">
+        let duration = 5
+        var timeleft = duration;
+        var downloadTimer = setInterval(function() 
+        {
+            if (timeleft <= -1) 
+            {
+                clearInterval(downloadTimer);
+            }
+
+            document.getElementById("progressBar").value = duration - timeleft;
+            let label = `in ${timeleft} second(s)`;
+            document.getElementById("countdown").innerHTML = label;
+            if ((timeleft) == -1) 
+            {
+                document.getElementById("countdown").innerHTML = "(You can close this now.)";
+                var span = document.getElementById("homebutton");
+                var a = document.createElement("a");
+                var btn = document.createElement("button");
+
+                a.appendChild(btn);
+                a.href = "/"
+                span.appendChild(a);
+                btn.className ="button"
+                btn.innerHTML = "Home";
+            }
+            timeleft -= 1;
+        }, 1000);
+    </script>
+</head>
+
+<body>
+    <h2>RTK Base Station</h2>
+    <h3>restart device</h3>
+
+    <span id="countdown">in 5 second(s)</span> <br>
+    <progress value="0" max="5" id="progressBar"> </progress><br>
+    <span id="homebutton"></span> <br>
+
+</body>
+
+</html>

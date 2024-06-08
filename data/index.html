@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <SCRIPT>
+        window.addEventListener('load', () => {
+          once();
+          async function once(arg1, arg2) {
+            try {
+              let resp = await fetch('/once', { method: 'POST', body: arg1});
+              let obj = await resp.json();
+              document.querySelector('#ssid').innerHTML = obj['SSID'];
+              document.querySelector('#mac').innerHTML = obj['MAC'];
+              document.querySelector('#bssid').innerHTML = obj['BSSID'];
+              document.querySelector('#chip_id').innerHTML = obj['CHIP_ID'];
+              document.querySelector('#chip_model').innerHTML = obj['CHIP_MODEL'];
+              document.querySelector('#free_heap').innerHTML = obj['FREE_HEAP'];
+              document.querySelector('#heap_size').innerHTML = obj['HEAP_SIZE'];
+              document.querySelector('#local_ip').innerHTML = obj['LOCAL_IP'];
+              document.querySelector('#sketch_size').innerHTML = obj['SKETCH_SIZE'];
+              document.querySelector('#free_sketch_space').innerHTML = obj['FREE_SKETCH_SPACE'];
+              document.querySelector('#channel').innerHTML = obj['CHANNEL'];
+              document.querySelector('#sketch').innerHTML = obj['SKETCH'];
+              document.querySelector('#sha').innerHTML = obj['SHA'];
+              document.querySelector('#version').innerHTML = obj['VERSION'];
+              document.querySelector('#work_dir').innerHTML = obj['WORK_DIR'];
+              document.querySelector('#computer_name').innerHTML = obj['COMPUTER_NAME'];
+              document.querySelector('#branchname').innerHTML = obj['BRANCHNAME'];
+              document.querySelector('#rssi').innerHTML = obj['RSSI'] + " dBm";
+            } catch(err) {
+              re();
+            }
+          }
+
+          function re(arg) {
+            window.clearInterval(wait);
+            fetch(arg);
+            output.classList.add('note');
+            if (arg == 'restart') {
+              output.innerHTML = 'Der Server wird neu gestartet. Die Daten werden in 10 Sekunden neu geladen.';
+              setTimeout(once, 10000);
+            } else if (arg == 'reconnect') {
+              output.innerHTML = 'Die WiFi Verbindung wird neu gestartet. Daten werden in 5 Sekunden neu geladen.';
+              setTimeout(once, 5000);
+            } else {
+              output.innerHTML = 'Es ist ein Verbindungfehler aufgetreten. Es wird versucht neu zu verbinden.';
+              setTimeout(once, 2000);
+            }
+          }
+        });
+      </SCRIPT>
+  </head>
+<body>
+
+<caption>
+    <h1>Board & Network Info</h1>
+</caption>
+  <table>
+    <tr>
+        <td>
+            ChipID: 
+        </td>
+        <td id="chip_id">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Chip Model: 
+        </td>
+        <td id="chip_model">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            connected to:
+        </td>
+        <td id="ssid">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Local IP:
+        </td>
+        <td id="local_ip">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            MAC address:
+        </td>
+        <td id="mac">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            BSSID:
+        </td>
+        <td id="bssid">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Heap Size:
+        </td>
+        <td id="heap_size">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Free Heap Size:
+        </td>
+        <td id="free_heap">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Channel:
+        </td>
+        <td id="channel">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            RSSI:
+        </td>
+        <td id="rssi">
+            *****
+        </td>
+    </tr>
+</table>
+<h1>Firmware Info</h1>
+  <table>
+    <tr>
+        <td>
+            Sketch:
+        </td>
+        <td id="sketch">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            working directory:
+        </td>
+        <td id="work_dir">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Dev Computer:
+        </td>
+        <td id="computer_name">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Sketch Size: 
+        </td>
+        <td id="sketch_size">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Free Sketch Space: 
+        </td>
+        <td id="free_sketch_space">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Version:
+        </td>
+        <td id="version">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Branch Name:
+        </td>
+        <td id="branchname">
+            *****
+        </td>
+    </tr>
+    <tr>
+        <td>
+            SHA:
+        </td>
+        <td id="sha">
+            *****
+        </td>
+    </tr>
+</table>
+<p><a href="/reboot"><button class="button">Reboot ESP32</button></a></p>
+</body>
+</html>
