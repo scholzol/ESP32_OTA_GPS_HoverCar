@@ -20,9 +20,31 @@
 #include "MySQL_1.h"
 #include <StartServer.h>
 
+#include <RF24.h>
+#include <printf.h>
+#include <SPI.h>
+#include <Wire.h>
 // #include section end ============================================================================================
 
 // define global variables begin -----------------------------------------------------------------------------------
+
+RF24 radio(4, 5); // CE, CSN
+const uint64_t GPS_pipe = 0xB00B1E5000LL;
+const uint64_t BME_pipe = 0xB00B1E5001LL;
+uint8_t pipeNum;
+byte code;
+
+struct 
+{
+  float temperature;
+  float humidity;
+  float pressure;
+} BME280_data;
+
+#define BAUD_RATE 115200
+#define TX2 17
+#define RX2 16
+#define SERIAL_MODE2 SERIAL_8N1
 
 unsigned long currentTime = millis();
 // Previous time
@@ -90,7 +112,9 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Booting");
 
-  // Initialize SPIFFS
+  Serial2.begin(BAUD_RATE, SERIAL_MODE2, RX2, TX2);
+
+// Initialize SPIFFS
   if(!SPIFFS.begin(true)){
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
@@ -107,6 +131,18 @@ void setup() {
   // start the Webserver
   startServer();
 
+  // initialize radio nRF24L01
+  bool ok = radio.begin();
+  Serial.println(ok);
+  delay(2000);
+  radio.openReadingPipe(0, GPS_pipe);
+  radio.openReadingPipe(1, BME_pipe);
+  radio.setPALevel(RF24_PA_MAX);
+  radio.setDataRate(RF24_2MBPS);
+  radio.startListening();
+  radio.printPrettyDetails();
+  Serial.println("Start listening");
+
   // insert or update the board table for the ESP32 bords in the MySQL database
   updateBoardTable(ssidesp32);
 }
@@ -117,5 +153,44 @@ void setup() {
 void loop() {
 
   ArduinoOTA.handle();
+  while (radio.available(&pipeNum)) {
+    ArduinoOTA.handle();
+    switch (pipeNum) {
+      case 0:
+        // code = '';
+        radio.read(&code, sizeof(code));
+        // Serial2.write(code);
+        Serial.write(code);
+        // Serial.print(" ");
+        break;
+      case 1:
+        radio.read(&BME280_data, sizeof(BME280_data));
+
+        Serial.print(" ");
+        Serial.print("Temperature = ");
+        Serial.print(BME280_data.temperature);
+        Serial.println(" *C");
+        
+        // Convert temperature to Fahrenheit
+        // Serial.print("Temperature = ");
+        // Serial.print(1.8 * BME280_data.readTemperature() + 32);
+        // Serial.println(" *F");
+        
+        Serial.print("Pressure = ");
+        Serial.print(BME280_data.pressure);
+        Serial.println(" hPa");
+
+        // Serial.print("Approx. Altitude = ");
+        // Serial.print(altitude);
+        // Serial.println(" m");
+
+        Serial.print("Humidity = ");
+        Serial.print(BME280_data.humidity);
+        Serial.println(" %");
+
+        Serial.println();
+        break;
+      }
+  }
 }
 // loop end =============================================================================================
